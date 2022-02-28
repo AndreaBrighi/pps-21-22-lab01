@@ -22,3 +22,5 @@
 *.kate-swp
 *.cache
 .idea/workspace.xml
+*.iml
+*/.idea
