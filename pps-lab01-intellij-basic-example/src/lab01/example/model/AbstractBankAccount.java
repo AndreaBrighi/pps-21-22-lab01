@@ -4,11 +4,10 @@ public abstract class AbstractBankAccount implements BankAccount {
     private double balance;
     private final AccountHolder holder;
 
-    interface WithdrawFee {
-        double calculateFee(double amount);
-    }
-
-    interface DepositFee {
+    /**
+     * Interface that allow to calculate the fee of the transaction
+     */
+    interface Fee {
         double calculateFee(double amount);
     }
 
@@ -27,13 +26,29 @@ public abstract class AbstractBankAccount implements BankAccount {
         return this.balance;
     }
 
-    protected void deposit(final int userID, final double amount, DepositFee fee) {
+    /**
+     * Allows the deposit of an amount on the account, if the given userID corresponds to the register holder ID
+     * of the bank account. This ID acts like an "identification token" .
+     *
+     * @param userID the id of the user that wants do the deposit
+     * @param amount the amount of the deposit
+     * @param fee    the fee that has to be applied for the transaction
+     */
+    protected void deposit(final int userID, final double amount, Fee fee) {
         if (checkUser(userID)) {
             this.balance = balance + amount - fee.calculateFee(amount);
         }
     }
 
-    protected void withdraw(final int userID, final double amount, WithdrawFee fee) {
+    /**
+     * Allows the withdrawal of an amount from the account, if the given userID corresponds to the register holder ID
+     * of the bank account. This ID acts like an "identification token" .
+     *
+     * @param userID the id of the user that wants do the withdrawal
+     * @param amount the amount of the withdrawal
+     * @param fee    the fee that has to be applied for the transaction
+     */
+    protected void withdraw(final int userID, final double amount, Fee fee) {
         if (checkUser(userID) && isWithdrawAllowed(amount + fee.calculateFee(amount))) {
             this.balance = this.balance - (amount + fee.calculateFee(amount));
         }

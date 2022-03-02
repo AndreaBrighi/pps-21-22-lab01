@@ -1,23 +1,18 @@
 package lab01.example.model;
 
+/**
+ * This class represent a particular instance of a BankAccount.
+ * In particular, a Simple Bank Account with Atm allows always the deposit
+ * while the withdrawal is allowed only if the balance greater or equal the withdrawal amount
+ * These actions can be done via ATM
+ */
 public class SimpleBankAccountWithAtm extends AbstractBankAccount {
 
-    enum WithdrawType implements WithdrawFee {
-        ATM {
-            @Override
-            public double calculateFee(double amount) {
-                return 1;
-            }
-        },
-        NORMAL {
-            @Override
-            public double calculateFee(double amount) {
-                return 0;
-            }
-        }
-    }
-
-    enum DepositType implements DepositFee {
+    /**
+     * The ways that can be done a transaction.
+     * Each of them have different fee
+     */
+    private enum TransactionType implements Fee {
         ATM {
             @Override
             public double calculateFee(double amount) {
@@ -38,19 +33,33 @@ public class SimpleBankAccountWithAtm extends AbstractBankAccount {
 
     @Override
     public void withdraw(int userID, double amount) {
-        withdraw(userID, amount, WithdrawType.NORMAL);
+        withdraw(userID, amount, TransactionType.NORMAL);
     }
 
+    /**
+     * Allows the withdrawal of an amount from the account via ATM, if the given userID corresponds to the register holder ID
+     * of the bank account. This ID acts like an "identification token" .
+     *
+     * @param userID the id of the user that wants do the withdrawal
+     * @param amount the amount of the withdrawal
+     */
     public void withdrawWithATM(int userID, double amount) {
-        withdraw(userID, amount, WithdrawType.ATM);
+        withdraw(userID, amount, TransactionType.ATM);
     }
 
     @Override
     public void deposit(int userID, double amount) {
-        deposit(userID, amount, DepositType.NORMAL);
+        deposit(userID, amount, TransactionType.NORMAL);
     }
 
+    /**
+     * Allows the deposit of an amount on the account via ATM, if the given userID corresponds to the register holder ID
+     * of the bank account. This ID acts like an "identification token" .
+     *
+     * @param userID the id of the user that wants do the deposit
+     * @param amount the amount of the deposit
+     */
     public void DepositWithATM(int userID, double amount) {
-        deposit(userID, amount, DepositType.ATM);
+        deposit(userID, amount, TransactionType.ATM);
     }
 }

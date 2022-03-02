@@ -1,7 +1,5 @@
 package lab01.example.model;
 
-import java.io.NotActiveException;
-
 /**
  * This interface defines the concept of a very basic bank account.
  */
