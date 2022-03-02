@@ -26,30 +26,34 @@ public class CircularListImpl implements CircularList {
 
     @Override
     public Optional<Integer> next() {
-        if (isEmpty()) {
-            return Optional.empty();
-        } else {
-            actual = (actual + 1) % size();
-            return Optional.of(list.get(actual));
-        }
+        actual++;
+        return actualElement();
     }
 
     @Override
     public Optional<Integer> previous() {
+        actual--;
+        return actualElement();
+    }
+
+    private Optional<Integer> actualElement() {
         if (isEmpty()) {
             return Optional.empty();
         } else {
-            int tmp = list.get((size() + actual) % size());
-            actual = (size() + actual - 1) % size();
-            return Optional.of(tmp);
+            if (actual >= size()) {
+                actual = 0;
+            } else if (actual < 0) {
+                actual = size() - 1;
+            }
+            return Optional.of(list.get(actual));
         }
     }
 
     @Override
     public void reset() {
         if (!isEmpty()) {
-            int tmp = list.get((actual + 1) % size());
-            list.remove((actual + 1) % size());
+            int tmp = list.get(actual);
+            list.remove(actual);
             list.add(0, tmp);
             actual = -1;
         }
@@ -58,12 +62,11 @@ public class CircularListImpl implements CircularList {
     @Override
     public Optional<Integer> next(SelectStrategy strategy) {
         Optional<Integer> tmp;
-        for(int i = 0; i < size(); i++){
+        for (int i = 0; i < size(); i++) {
             tmp = next();
             if (tmp.isEmpty()) {
                 return Optional.empty();
-            }
-            else{
+            } else {
                 if (strategy.apply(tmp.get())) {
                     return tmp;
                 }

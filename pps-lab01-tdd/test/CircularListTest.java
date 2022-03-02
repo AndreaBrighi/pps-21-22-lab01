@@ -19,6 +19,12 @@ public class CircularListTest {
         list = new CircularListImpl();
     }
 
+    void initListWith(int... elements) {
+        for (var elem : elements) {
+            list.add(elem);
+        }
+    }
+
     @Test
     public void testCreatedEmpty() {
         assertTrue(list.isEmpty());
@@ -45,36 +51,34 @@ public class CircularListTest {
 
     @Test
     public void testAdd() {
-        list.add(1);
+        initListWith(1);
         assertFalse(list.isEmpty());
         assertEquals(1, list.size());
     }
 
     @Test
     public void testNextWithOneElement() {
-        list.add(1);
+        initListWith(1);
         assertEquals(Optional.of(1), list.next());
     }
 
     @Test
     public void testNextLinkedWithOneElement() {
-        list.add(1);
+        initListWith(1);
         assertEquals(Optional.of(1), list.next());
         assertEquals(Optional.of(1), list.next());
     }
 
     @Test
     public void testNextWithTwoElements() {
-        list.add(1);
-        list.add(2);
+        initListWith(1, 2);
         assertEquals(Optional.of(1), list.next());
         assertEquals(Optional.of(2), list.next());
     }
 
     @Test
     public void testNextLinkedWithTwoElements() {
-        list.add(1);
-        list.add(2);
+        initListWith(1, 2);
         assertEquals(Optional.of(1), list.next());
         assertEquals(Optional.of(2), list.next());
         assertEquals(Optional.of(1), list.next());
@@ -83,29 +87,27 @@ public class CircularListTest {
 
     @Test
     public void testPreviousWithOneElement() {
-        list.add(1);
+        initListWith(1);
         assertEquals(Optional.of(1), list.previous());
     }
 
     @Test
     public void testPreviousLinkedWithOneElement() {
-        list.add(1);
+        initListWith(1);
         assertEquals(Optional.of(1), list.previous());
         assertEquals(Optional.of(1), list.previous());
     }
 
     @Test
     public void testPreviousWithTwoElements() {
-        list.add(1);
-        list.add(2);
+        initListWith(1, 2);
         assertEquals(Optional.of(2), list.previous());
         assertEquals(Optional.of(1), list.previous());
     }
 
     @Test
     public void testPreviousLinkedWithTwoElements() {
-        list.add(1);
-        list.add(2);
+        initListWith(1, 2);
         assertEquals(Optional.of(2), list.previous());
         assertEquals(Optional.of(1), list.previous());
         assertEquals(Optional.of(2), list.previous());
@@ -113,19 +115,24 @@ public class CircularListTest {
     }
 
     @Test
-    public void testNextPrevious() {
-        list.add(1);
-        list.add(2);
-        assertEquals(Optional.of(2), list.previous());
+    public void testPreviousNext() {
+        initListWith(1, 2, 3);
+        assertEquals(Optional.of(3), list.previous());
+        assertEquals(Optional.of(1), list.next());
         assertEquals(Optional.of(2), list.next());
+    }
+
+    @Test
+    public void testNextPrevious() {
+        initListWith(1, 2, 3);
+        assertEquals(Optional.of(1), list.next());
+        assertEquals(Optional.of(3), list.previous());
         assertEquals(Optional.of(1), list.next());
     }
 
     @Test
     public void testReset() {
-        list.add(1);
-        list.add(2);
-        list.add(3);
+        initListWith(1, 2, 3);
         assertEquals(Optional.of(3), list.previous());
         assertEquals(Optional.of(2), list.previous());
         list.reset();
@@ -136,52 +143,40 @@ public class CircularListTest {
 
     @Test
     public void testEvenStrategy() {
-        list.add(1);
-        list.add(2);
-        list.add(3);
-        list.add(4);
+        initListWith(1, 2, 3, 4);
         assertEquals(Optional.of(2), list.next(i -> i % 2 == 0));
         assertEquals(Optional.of(4), list.next(i -> i % 2 == 0));
     }
 
     @Test
     public void testEvenStrategyNoElements() {
-        list.add(1);
-        list.add(3);
+        initListWith(1, 3);
         assertEquals(Optional.empty(), list.next(i -> i % 2 == 0));
     }
 
     @Test
     public void testMultipleOfStrategy() {
-        list.add(1);
-        list.add(2);
-        list.add(3);
-        list.add(4);
+        initListWith(1, 2, 3, 4);
         assertEquals(Optional.of(3), list.next(i -> i % 3 == 0));
         assertEquals(Optional.of(3), list.next(i -> i % 3 == 0));
     }
 
     @Test
     public void testMultipleOfStrategyNoElements() {
-        list.add(1);
-        list.add(3);
+        initListWith(1, 3);
         assertEquals(Optional.empty(), list.next(i -> i % 4 == 0));
     }
 
     @Test
     public void testEqualsStrategy() {
-        list.add(1);
-        list.add(2);
-        list.add(3);
-        list.add(4);
+        initListWith(1, 2, 3, 4);
         assertEquals(Optional.of(1), list.next(i -> i == 1));
         assertEquals(Optional.of(3), list.next(i -> i == 3));
     }
 
     @Test
     public void testEqualStrategyNoElements() {
-        list.add(1);
-        list.add(3);
+        initListWith(1, 3);
         assertEquals(Optional.empty(), list.next(i -> i == 4));
     }
 }
