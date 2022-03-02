@@ -1,5 +1,4 @@
-import lab01.tdd.CircularList;
-import lab01.tdd.CircularListImpl;
+import lab01.tdd.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +12,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CircularListTest {
 
     private CircularList list;
+    private final SelectAbstractFactory evenStrategy = new EvenStrategyFactory();
+    private final SelectAbstractFactory equals4 = new EqualsStrategyFactory(4);
+
 
     @BeforeEach
     void beforeEach() {
@@ -144,8 +146,8 @@ public class CircularListTest {
     @Test
     public void testEvenStrategy() {
         initListWith(1, 2, 3, 4);
-        assertEquals(Optional.of(2), list.next(i -> i % 2 == 0));
-        assertEquals(Optional.of(4), list.next(i -> i % 2 == 0));
+        assertEquals(Optional.of(2), list.next(evenStrategy.createSelectStrategy()));
+        assertEquals(Optional.of(4), list.next(evenStrategy.createSelectStrategy()));
     }
 
     @Test
@@ -156,27 +158,37 @@ public class CircularListTest {
 
     @Test
     public void testMultipleOfStrategy() {
+        final SelectAbstractFactory multipleOf3 = new MultipleOfStrategyFactory(3);
         initListWith(1, 2, 3, 4);
-        assertEquals(Optional.of(3), list.next(i -> i % 3 == 0));
-        assertEquals(Optional.of(3), list.next(i -> i % 3 == 0));
+        assertEquals(Optional.of(3), list.next(multipleOf3.createSelectStrategy()));
+        assertEquals(Optional.of(3), list.next(multipleOf3.createSelectStrategy()));
     }
 
     @Test
     public void testMultipleOfStrategyNoElements() {
+        final SelectAbstractFactory multipleOf4 = new MultipleOfStrategyFactory(4);
         initListWith(1, 3);
-        assertEquals(Optional.empty(), list.next(i -> i % 4 == 0));
+        assertEquals(Optional.empty(), list.next(multipleOf4.createSelectStrategy()));
     }
 
     @Test
     public void testEqualsStrategy() {
+        initListWith(1, 2,4, 3, 4);
+        list.next(equals4.createSelectStrategy());
+        assertEquals(Optional.of(3), list.next());
+        list.next(equals4.createSelectStrategy());
+        assertEquals(Optional.of(1), list.next());
+    }
+
+    @Test
+    public void testEqualsStrategyAdvanced() {
         initListWith(1, 2, 3, 4);
-        assertEquals(Optional.of(1), list.next(i -> i == 1));
-        assertEquals(Optional.of(3), list.next(i -> i == 3));
+        assertEquals(Optional.of(4), list.next(equals4.createSelectStrategy()));
     }
 
     @Test
     public void testEqualStrategyNoElements() {
         initListWith(1, 3);
-        assertEquals(Optional.empty(), list.next(i -> i == 4));
+        assertEquals(Optional.empty(), list.next(equals4.createSelectStrategy()));
     }
 }
